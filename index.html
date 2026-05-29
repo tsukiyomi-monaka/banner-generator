@@ -273,6 +273,28 @@
     .btn-copy:hover  { background: var(--brand); color: #fff; }
     .btn-copy.copied { background: var(--green); border-color: var(--green); color: #fff; }
 
+    /* ========== Gemini 案内ボックス ========== */
+    .gemini-tip {
+      background: #eff6ff;
+      border: 1.5px solid #bfdbfe;
+      border-left: 4px solid #3b82f6;
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 13px;
+      line-height: 1.7;
+      color: #1e3a5f;
+    }
+    .gemini-tip .tip-icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+    .gemini-tip .tip-body strong {
+      font-size: 14px; font-weight: 700;
+      display: block; margin-bottom: 4px;
+      color: #1d4ed8;
+    }
+
     /* ========== 使い方ヒント ========== */
     .usage-hint {
       margin-top: 14px;
@@ -404,6 +426,17 @@
 
       <!-- Gemini ImageFX タブ -->
       <div id="tab-gemini" style="display:none;">
+
+        <!-- 案内ボックス -->
+        <div class="gemini-tip">
+          <div class="tip-icon">💡</div>
+          <div class="tip-body">
+            <strong>Gemini で使う場合</strong>
+            下のプロンプトをコピーして、アップロードした商品画像と一緒に Gemini に貼り付けてください。<br>
+            画像を直接参照してデザイン提案を生成してくれます。
+          </div>
+        </div>
+
         <div class="prompt-header">
           <div class="prompt-header-text">
             <div class="prompt-label">Gemini ImageFX 用プロンプト（英語・A〜D案）</div>
@@ -555,25 +588,29 @@ function initUI() {
 imageInput.addEventListener('change', e => {
   const file = e.target.files[0];
   if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    uploadPreview.src = ev.target.result;
-    uploadPreview.style.display = 'block';
-    uploadPlaceholder.style.display = 'none';
-    removeImageBtn.style.display = 'inline';
-    uploadArea.classList.add('has-image');
-    hasImage = true;
-  };
-  reader.readAsDataURL(file);
+  // base64変換不要 — ObjectURL でプレビュー表示のみ
+  if (uploadPreview._objUrl) URL.revokeObjectURL(uploadPreview._objUrl);
+  const objUrl = URL.createObjectURL(file);
+  uploadPreview._objUrl    = objUrl;
+  uploadPreview.src        = objUrl;
+  uploadPreview.style.display    = 'block';
+  uploadPlaceholder.style.display = 'none';
+  removeImageBtn.style.display   = 'inline';
+  uploadArea.classList.add('has-image');
+  hasImage = true;
 });
 
 removeImageBtn.addEventListener('click', e => {
   e.stopPropagation();
-  imageInput.value = '';
-  uploadPreview.style.display = 'none';
-  uploadPreview.src = '';
+  if (uploadPreview._objUrl) {
+    URL.revokeObjectURL(uploadPreview._objUrl);
+    uploadPreview._objUrl = null;
+  }
+  imageInput.value               = '';
+  uploadPreview.style.display    = 'none';
+  uploadPreview.src              = '';
   uploadPlaceholder.style.display = 'block';
-  removeImageBtn.style.display = 'none';
+  removeImageBtn.style.display   = 'none';
   uploadArea.classList.remove('has-image');
   hasImage = false;
 });
