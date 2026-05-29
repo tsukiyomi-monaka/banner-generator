@@ -151,22 +151,40 @@
       margin-top: 6px; line-height: 1.5;
     }
 
-    /* ========== ラジオ / チェックボックス ========== */
-    .radio-group, .checkbox-group { display: flex; flex-wrap: wrap; gap: 10px; }
-
-    .tone-radio label {
-      display: flex; align-items: center; gap: 7px;
-      padding: 8px 18px;
-      border: 1.5px solid var(--gray-300); border-radius: 100px;
-      cursor: pointer; font-size: 13px; font-weight: 500;
-      color: var(--gray-700);
-      transition: all .15s; user-select: none;
+    /* ========== トーンカード ========== */
+    .tone-card-group {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
     }
-    .tone-radio input { display: none; }
-    .tone-radio input:checked + label {
-      border-color: var(--brand); background: var(--brand-l); color: var(--brand);
+    .tone-card input { display: none; }
+    .tone-card label {
+      display: flex; flex-direction: column; gap: 4px;
+      padding: 11px 13px;
+      border: 1.5px solid var(--gray-300); border-radius: 8px;
+      cursor: pointer; height: 100%;
+      transition: border-color .15s, background .15s, box-shadow .15s;
+      user-select: none;
     }
+    .tone-card label:hover {
+      border-color: var(--brand); background: var(--brand-l);
+    }
+    .tone-card input:checked + label {
+      border-color: var(--brand); background: var(--brand-l);
+      box-shadow: 0 0 0 1.5px var(--brand);
+    }
+    .tone-name {
+      font-size: 14px; font-weight: 700; color: var(--gray-900);
+      line-height: 1.3;
+    }
+    .tone-use {
+      font-size: 11px; color: var(--gray-500); line-height: 1.5;
+    }
+    .tone-card input:checked + label .tone-name { color: var(--brand); }
+    .tone-card input:checked + label .tone-use  { color: var(--brand); opacity: .8; }
 
+    /* ========== チェックボックス（サイズ） ========== */
+    .checkbox-group { display: flex; flex-wrap: wrap; gap: 10px; }
     .size-check label {
       display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
       padding: 8px 14px;
@@ -373,7 +391,7 @@
       <!-- トーン -->
       <div class="form-group full">
         <label>トーン <span class="req">*</span></label>
-        <div class="radio-group" id="toneGroup"></div>
+        <div class="tone-card-group" id="toneGroup"></div>
       </div>
 
       <div class="sep"></div>
@@ -474,48 +492,88 @@ const BANNER_SIZES = [
 
 const TONES = [
   {
-    id: 'luxury',  label: '高級感',
-    ja: '高級感（ラグジュアリー）',
+    id: 'luxury',       label: '高級感',
+    desc: 'ジュエリー・ホテル・高級食材',
     en: 'luxury, premium, sophisticated',
-    colorVariants: [
-      'deep black and gold color palette',
-      'champagne, ivory and pearl elegant tones',
-      'dark marble texture with gold foil accents',
-      'silver, rose gold and charcoal monochrome',
-    ],
+    colorVariants: ['deep black and gold palette', 'champagne and ivory elegant tones', 'dark marble with gold foil accents', 'silver, rose gold and charcoal monochrome'],
   },
   {
-    id: 'casual',  label: 'カジュアル',
-    ja: 'カジュアル（親しみやすい）',
+    id: 'casual',       label: 'カジュアル',
+    desc: '日用品・アプリ・ライフスタイル',
     en: 'casual, friendly, approachable',
-    colorVariants: [
-      'warm orange and sunny yellow accent palette',
-      'bright coral pink with sky blue highlights',
-      'cheerful pastel rainbow color scheme',
-      'vibrant lime green with golden yellow',
-    ],
+    colorVariants: ['warm orange and sunny yellow accents', 'bright coral pink and sky blue', 'cheerful pastel rainbow tones', 'vibrant lime green and golden yellow'],
   },
   {
-    id: 'urgent',  label: '緊急感',
-    ja: '緊急感（アクション訴求）',
+    id: 'urgent',       label: '緊急感',
+    desc: 'タイムセール・期間限定・申込締切',
     en: 'urgent, bold, high-impact',
-    colorVariants: [
-      'vivid red and white maximum contrast',
-      'burning orange gradient on dark background',
-      'bold scarlet with neon yellow accent on black',
-      'black and yellow high-alert warning palette',
-    ],
+    colorVariants: ['vivid red and white maximum contrast', 'burning orange on dark background', 'scarlet with neon yellow on black', 'black and yellow bold alert palette'],
   },
   {
-    id: 'cool',    label: 'クール',
-    ja: 'クール（モダン・ミニマル）',
+    id: 'cool',         label: 'クール',
+    desc: 'テック・ガジェット・メンズ向け',
     en: 'minimal, modern, sleek',
-    colorVariants: [
-      'electric blue on deep charcoal background',
-      'pure monochrome black, white and gray',
-      'deep navy blue with crisp white typography',
-      'dark gradient with subtle neon blue accent',
-    ],
+    colorVariants: ['electric blue on deep charcoal', 'pure monochrome black and white', 'deep navy and crisp white', 'dark gradient with neon blue accent'],
+  },
+  {
+    id: 'trust',        label: '信頼感',
+    desc: '金融・保険・BtoB',
+    en: 'trustworthy, reliable, professional, authoritative',
+    colorVariants: ['deep navy and clean white', 'corporate blue and silver', 'dark teal and white', 'slate blue and light gray'],
+  },
+  {
+    id: 'friendly',     label: '親しみやすい',
+    desc: '地域店舗・子ども向け・食品',
+    en: 'warm, welcoming, friendly, homely',
+    colorVariants: ['warm beige and soft coral', 'soft peach and sage green', 'cream and pastel yellow', 'warm white and light orange'],
+  },
+  {
+    id: 'seasonal',     label: '季節感',
+    desc: 'セール・イベント・季節商材',
+    en: 'seasonal, festive, timely, celebratory',
+    colorVariants: ['autumn warm gold and brown', 'spring soft pink and fresh green', 'summer vivid yellow and ocean blue', 'winter cool silver and snow white'],
+  },
+  {
+    id: 'pop',          label: 'ポップ',
+    desc: '10〜20代向け・エンタメ・食品',
+    en: 'pop art, colorful, playful, youthful, energetic',
+    colorVariants: ['hot pink and electric yellow', 'electric blue and vivid orange', 'rainbow multi-color gradient', 'neon green and magenta'],
+  },
+  {
+    id: 'elegant',      label: 'エレガント',
+    desc: 'ブライダル・コスメ・ファッション',
+    en: 'elegant, graceful, refined, romantic',
+    colorVariants: ['blush pink and champagne gold', 'soft lavender and pearl white', 'rose gold and warm cream', 'sage green and antique white'],
+  },
+  {
+    id: 'sporty',       label: 'スポーティ',
+    desc: 'フィットネス・スポーツ用品',
+    en: 'sporty, dynamic, energetic, bold, athletic',
+    colorVariants: ['vivid green and jet black', 'electric blue and bright orange', 'bold red and white', 'neon yellow on dark charcoal'],
+  },
+  {
+    id: 'natural',      label: '自然・エコ',
+    desc: 'オーガニック・環境系・食品',
+    en: 'natural, organic, eco-friendly, earthy',
+    colorVariants: ['forest green and warm cream', 'earthy brown and sage', 'soft green and linen white', 'moss green and natural sand'],
+  },
+  {
+    id: 'sale',         label: 'セール・お得感',
+    desc: 'EC・小売・キャンペーン',
+    en: 'sale, discount, value, promotional, deal',
+    colorVariants: ['vivid red and yellow price-tag style', 'bright orange and white', 'bold green and white savings', 'multi-color promotional burst'],
+  },
+  {
+    id: 'story',        label: '感動・ストーリー',
+    desc: 'ブランディング・周年・社会貢献',
+    en: 'emotional, storytelling, inspirational, heartfelt',
+    colorVariants: ['warm amber and deep brown', 'cinematic rich deep tones', 'soft light and shadow contrast', 'warm sepia with highlight'],
+  },
+  {
+    id: 'professional', label: 'プロフェッショナル',
+    desc: '医療・法律・IT・コンサル',
+    en: 'professional, expert, credible, authoritative, corporate',
+    colorVariants: ['dark navy and crisp white', 'deep charcoal and silver', 'professional blue and gray', 'graphite and clean white'],
   },
 ];
 
@@ -558,13 +616,16 @@ let hasImage = false;
    初期化：フォームUI構築
    ============================================== */
 function initUI() {
-  // トーン ラジオボタン
+  // トーンカード
   TONES.forEach((t, i) => {
     const wrap = document.createElement('div');
-    wrap.className = 'tone-radio';
+    wrap.className = 'tone-card';
     wrap.innerHTML =
       `<input type="radio" name="tone" id="tone_${t.id}" value="${t.id}" ${i === 0 ? 'checked' : ''}>
-       <label for="tone_${t.id}">${t.label}</label>`;
+       <label for="tone_${t.id}">
+         <span class="tone-name">${t.label}</span>
+         <span class="tone-use">${t.desc}</span>
+       </label>`;
     toneGroupEl.appendChild(wrap);
   });
 
@@ -691,7 +752,7 @@ function buildClaudePrompt({ catchcopy, subtext, cta, target, tone, sizeList }) 
     `- サブテキスト：${subtext  || 'なし'}`,
     `- CTA：${cta     || 'なし'}`,
     `- ターゲット：${target  || 'なし'}`,
-    `- トーン：${tone.ja}`,
+    `- トーン：${tone.label}（${tone.desc}）`,
     `- バナーサイズ：${sizeList}`,
   ];
 
